@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:iremember/features/memory/presentation/memory_screen.dart';
+import 'package:iremember/features/memory/memory_screen.dart';
 import 'package:iremember/features/sign_in/presentation/sign_up_screen.dart';
 
 class LoginPage extends StatelessWidget {

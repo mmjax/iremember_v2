@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:iremember/features/memory/presentation/widget/memory_body.dart';
-
+import 'package:iremember/features/memory/widget/memory_body.dart';
+import 'package:iremember/data/memory/models.dart' as mamory_data;
 
 class MemoryCard extends StatelessWidget {
-  const MemoryCard({super.key});
+  const MemoryCard({super.key, required this.memory});
+
+  final mamory_data.Memory memory;
 
   @override
   Widget build(BuildContext context){
-    return const Card(
+    return Card(
       child: Padding(
-        padding: EdgeInsets.only(
+        padding: const EdgeInsets.only(
           top: 5.0,
           bottom: 15.0,
           left: 10.0,
@@ -19,7 +21,7 @@ class MemoryCard extends StatelessWidget {
           children: [
             Column(
               children: [
-                  MemoryBody(),
+                  MemoryBody(memory: memory),
               ],
             )
           ],

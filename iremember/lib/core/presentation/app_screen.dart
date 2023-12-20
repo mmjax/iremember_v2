@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iremember/features/log_in/presentation/log_in_screen.dart';
-import 'package:iremember/features/memory/presentation/memory_screen.dart';
+import 'package:iremember/features/memory/memory_screen.dart';
 import 'package:iremember/features/profile/profile_screen.dart';
 import 'package:iremember/features/settings/setting_page.dart';
 import 'package:iremember/features/sign_in/presentation/sign_up_screen.dart';
 import 'package:iremember/theme/color_schemes.g.dart';
+import 'package:iremember/features/memory/bloc/memory_page_bloc.dart';
+import 'package:iremember/data/memory/repository.dart';
 
 
 
@@ -14,8 +17,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool a = true;
-    return MaterialApp(
+    bool a = false;
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => DetailMemoryBloc(MemoryRepository()),
+        )
+      ],
+    child: MaterialApp(
       theme: ThemeData(
         colorScheme: darkColorScheme,
         useMaterial3: true,
@@ -23,12 +32,13 @@ class MyApp extends StatelessWidget {
       // home: a ? LoginPage() : const MemoryScreen(),
       initialRoute: a ? '/login' : '/',
       routes: {
-        '/': (context) => const MemoryScreen(),
+        '/': (context) => const DetailMemory(),
         '/login': (context) => LoginPage(),
         '/signup': (context) => SignUpPage(),
         '/settings': (context) => const SettingsScreen(),
         '/profile': (context) => const ProfileScreen(),
       },
+    )
     );
   }
 }

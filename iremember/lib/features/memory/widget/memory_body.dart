@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:iremember/data/memory/models.dart' as mamory_data;
+
 
 
 class MemoryBody extends StatelessWidget {
-  const MemoryBody({Key? key}) : super(key: key);
+  const MemoryBody({super.key, required this.memory});
+
+  final mamory_data.Memory memory;
 
   @override
   Widget build(BuildContext context) {
@@ -17,15 +21,15 @@ class MemoryBody extends StatelessWidget {
             height: 400,
           ),
           const SizedBox(height: 16),
-          const Text('Клуб Клоунады',
-          style: TextStyle(
+          Text(memory.title,
+          style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
               ),
             ),         
-          const Text(
-            'прям какая-то клоунада',
-            style: TextStyle(
+          Text(
+            memory.description,
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
