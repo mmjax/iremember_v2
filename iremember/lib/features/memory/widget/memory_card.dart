@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:iremember/features/memory/widget/memory_body.dart';
-import 'package:iremember/data/memory/models.dart' as mamory_data;
+import 'package:iremember/data/memory/models.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 
 class MemoryCard extends StatelessWidget {
   const MemoryCard({super.key, required this.memory});
 
-  final mamory_data.Memory memory;
+  final Memory memory;
 
   @override
   Widget build(BuildContext context){

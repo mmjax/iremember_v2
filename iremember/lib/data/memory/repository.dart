@@ -15,8 +15,11 @@ class MemoryRepository {
     return memories.map((data)=>Memory.fromJson(data)).toList();
   }
 
-  Future<Memory> getMemoryById(int memoryId) async {
-    final response = await http.get(Uri.parse('http://127.0.0.1:8000/api/v1/memories/${memoryId}/'));
+  Future<Memory> getMemoryById(int memoryId, String token) async {
+    final response = await http.get(
+      Uri.parse('http://192.168.1.92:8000/api/v1/memories/${memoryId}/'),
+      headers: {"Authorization" : token},
+    );
     if (response.statusCode != 200) { 
       throw Exception(response);
     }

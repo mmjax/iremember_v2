@@ -6,6 +6,7 @@ import 'package:iremember/features/memory/widget/memory_card.dart';
 import 'package:iremember/features/memory/bloc/memory_page_event.dart';
 import 'package:iremember/features/memory/bloc/memory_page_state.dart';
 import 'package:iremember/features/memory/bloc/memory_page_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 
 class DetailMemory extends StatefulWidget {
@@ -20,17 +21,19 @@ class _DetailMemoryState extends State<DetailMemory> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        drawer: const MainDrawer(),
         body: BlocBuilder<DetailMemoryBloc, DetailMemoryState>(
           bloc: BlocProvider.of<DetailMemoryBloc>(context)..add(LoadMemoryEvent()),
           builder: (context, state) {
+
             if (state is MemoryLoadingState) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
             }
             if (state is MemoryLoadedState) {
-              return CustomScrollView(
-                slivers: [
+              return ListView(
+                  children: [
                   MemoryCard(memory: state.memory),
                 ]
               );

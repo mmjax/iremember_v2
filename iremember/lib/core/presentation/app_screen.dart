@@ -2,38 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iremember/features/log_in/presentation/log_in_screen.dart';
 import 'package:iremember/features/memory/memory_screen.dart';
+import 'package:iremember/features/memory_list/memory_list_screen.dart';
 import 'package:iremember/features/profile/profile_screen.dart';
 import 'package:iremember/features/settings/setting_page.dart';
 import 'package:iremember/features/sign_in/presentation/sign_up_screen.dart';
 import 'package:iremember/theme/color_schemes.g.dart';
 import 'package:iremember/features/memory/bloc/memory_page_bloc.dart';
 import 'package:iremember/data/memory/repository.dart';
-
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+  
 
   @override
   Widget build(BuildContext context) {
+    const storage = FlutterSecureStorage();
     bool a = false;
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => DetailMemoryBloc(MemoryRepository()),
+          create: (context) => DetailMemoryBloc(MemoryRepository(), storage),
         )
       ],
-    child: MaterialApp(
-      theme: ThemeData(
-        colorScheme: darkColorScheme,
-        useMaterial3: true,
-      ),
+      child: MaterialApp(
+        theme: ThemeData(
+          colorScheme: darkColorScheme,
+          useMaterial3: true,
+        ),
       // home: a ? LoginPage() : const MemoryScreen(),
-      initialRoute: a ? '/login' : '/',
+      initialRoute:'/login',
       routes: {
         '/': (context) => const DetailMemory(),
-        '/login': (context) => LoginPage(),
+        '/memories': (context) => const MemoryList(),
+        '/login': (context) => LoginPage(storage: storage,),
         '/signup': (context) => SignUpPage(),
         '/settings': (context) => const SettingsScreen(),
         '/profile': (context) => const ProfileScreen(),
@@ -114,6 +118,15 @@ class MainDrawer extends StatelessWidget {
                   Navigator.pushNamed(context, '/settings');
                 },
                 child: const Text('Настройки'),
+              ),
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/memories');
+                },
+                child: const Text('Все воспоминания'),
               ),
             ),
             Align(

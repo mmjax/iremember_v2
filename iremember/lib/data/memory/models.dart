@@ -17,7 +17,6 @@ class Memory {
   final String description;
   final String? photo;
   final String date;
-  final List<Users> users;
 
   Memory(
     this.date,
@@ -25,7 +24,6 @@ class Memory {
     this.id,
     this.photo,
     this.title,
-    this.users
   );
 
   Memory.fromJson(Map<String, dynamic> json)
@@ -33,6 +31,5 @@ class Memory {
       description = json['description'],
       date = json['date'],
       photo = json['photo'],
-      title = json['title'],
-      users = List<Users>.from(json['users'].map((users)=> Users.fromJson(users)));
+      title = json['title'];
 }

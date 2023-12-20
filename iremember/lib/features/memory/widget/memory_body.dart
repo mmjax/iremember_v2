@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:iremember/data/memory/models.dart' as mamory_data;
+import 'package:iremember/data/memory/models.dart';
 
 
 
 class MemoryBody extends StatelessWidget {
   const MemoryBody({super.key, required this.memory});
 
-  final mamory_data.Memory memory;
-
+  final Memory memory;
   @override
   Widget build(BuildContext context) {
     return Center(
