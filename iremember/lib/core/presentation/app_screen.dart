@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     const storage = FlutterSecureStorage();
     bool a = false;
+    bool token = storage.read(key: 'token') != null;
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -33,12 +34,12 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
       // home: a ? LoginPage() : const MemoryScreen(),
-      initialRoute:'/login',
+      initialRoute: token ? '/' : '/login',
       routes: {
         '/': (context) => const DetailMemory(),
         '/memories': (context) => const MemoryList(),
-        '/login': (context) => LoginPage(storage: storage,),
-        '/signup': (context) => SignUpPage(),
+        '/login': (context) => LoginPage(storage: storage),
+        '/signup': (context) => SignUpPage(storage: storage),
         '/settings': (context) => const SettingsScreen(),
         '/profile': (context) => const ProfileScreen(),
       },

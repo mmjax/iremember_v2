@@ -1,31 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:iremember/features/log_in/presentation/log_in_screen.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+
+void showErrorSnackBar(BuildContext context, String errorMessage) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(errorMessage),
+      duration: const Duration(seconds: 3),
+    ),
+  );
+}
+
 
 class SignUpPage extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _repasswordController = TextEditingController();
+  final FlutterSecureStorage storage;
 
-  SignUpPage({super.key});
+  SignUpPage({Key? key, required this.storage}) : super(key: key);
 
 
   @override
   Widget build(BuildContext context) {
-    // ignore: no_leading_underscores_for_local_identifiers
-    void _registration() {
-    String email = _emailController.text;
-    String password = _passwordController.text;
-    String username = _usernameController.text;
-    String repassword = _repasswordController.text;
 
+    Future<void> _registration(BuildContext context) async {
+      String email = _emailController.text;
+      String password = _passwordController.text;
+      String username = _usernameController.text;
+      String repassword = _repasswordController.text;
 
-    // Здесь можно добавить логику для проверки логина и пароля
-    // и выполнение соответствующих действий.
+      if (email.isNotEmpty && password.isNotEmpty && username.isNotEmpty && password == repassword) {
+        // Отправка запроса на сервер для авторизации
+        final response = await http.post(
+          Uri.parse('http://192.168.1.92:8000/create_user'),
+          body: json.encode({'username': username, 'password': password, 'email': email}),
+          headers: {"Content-Type" : "application/json",
+            'Accept': 'application/json',},
+        );
 
-    if (email.isNotEmpty && password.isNotEmpty && username.isNotEmpty && password == repassword) {
-      Navigator.pushNamed(context, '/login');
-    }
+        if (response.statusCode == 200) {
+          Navigator.pushNamed(context, '/login');
+        }else {
+          if (response.statusCode == 400) {
+            // Bad Request - Incorrect input data
+            final errorDetail = json.decode(response.body)['detail'];
+            final errorMessage = (errorDetail is List) ? errorDetail[0]['msg'].toString() : errorDetail.toString();
+            // Show error messages to the user
+            showErrorSnackBar(context, errorMessage);
+          }
+        }
+      }
+      else{
+        showErrorSnackBar(context, 'Все поля являются обязательными к заполнению');
+      }
     }
     return Scaffold(
       body: SingleChildScrollView(
@@ -72,7 +104,7 @@ class SignUpPage extends StatelessWidget {
               ),
             ),
             ElevatedButton(
-              onPressed: _registration,
+              onPressed: () => _registration(context),
               child: const Text('Зарегистрироваться'),
             ),
           ],

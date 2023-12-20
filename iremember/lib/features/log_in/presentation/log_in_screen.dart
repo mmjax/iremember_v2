@@ -26,15 +26,6 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    // ignore: no_leading_underscores_for_local_identifiers
-    // void _login() {
-    //   String email = _emailController.text;
-    //   String password = _passwordController.text;
-
-    //   if (email.isNotEmpty && password.isNotEmpty) {
-    //     Navigator.pushNamed(context, '/');
-    //   }
-    // }
     Future<void> _login(BuildContext context) async {
       String email = _emailController.text;
       String password = _passwordController.text;
