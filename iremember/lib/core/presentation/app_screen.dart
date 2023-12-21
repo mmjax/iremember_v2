@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iremember/features/log_in/presentation/log_in_screen.dart';
 import 'package:iremember/features/memory/memory_screen.dart';
+import 'package:iremember/features/memory_list/bloc/memory_list_bloc.dart';
 import 'package:iremember/features/memory_list/memory_list_screen.dart';
 import 'package:iremember/features/profile/profile_screen.dart';
 import 'package:iremember/features/settings/setting_page.dart';
@@ -12,88 +13,55 @@ import 'package:iremember/data/memory/repository.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 
-
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-  
+  const MyApp({Key? key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
+
+  Future<Widget> _buildContent() async {
     const storage = FlutterSecureStorage();
-    bool a = false;
-    bool token = storage.read(key: 'token') != null;
+    String? stringValue = await storage.read(key: 'token');
+    bool value = stringValue != null;
+
     return MultiBlocProvider(
       providers: [
         BlocProvider(
           create: (context) => DetailMemoryBloc(MemoryRepository(), storage),
-        )
+        ),
+        BlocProvider(
+          create: (context) => MemoryListBloc(MemoryRepository(), storage),
+        ),
       ],
       child: MaterialApp(
         theme: ThemeData(
           colorScheme: darkColorScheme,
           useMaterial3: true,
         ),
-      // home: a ? LoginPage() : const MemoryScreen(),
-      initialRoute: token ? '/' : '/login',
-      routes: {
-        '/': (context) => const DetailMemory(),
-        '/memories': (context) => const MemoryList(),
-        '/login': (context) => LoginPage(storage: storage),
-        '/signup': (context) => SignUpPage(storage: storage),
-        '/settings': (context) => const SettingsScreen(),
-        '/profile': (context) => const ProfileScreen(),
+        initialRoute: value ? '/' : '/login',
+        routes: {
+          '/': (context) => const MemoryList(),
+          '/memory': (context) => const DetailMemory(),
+          '/login': (context) => LoginPage(storage: storage),
+          '/signup': (context) => SignUpPage(storage: storage),
+          '/settings': (context) => const SettingsScreen(),
+          '/profile': (context) => const ProfileScreen(),
+        },
+      ),
+    );
+  }
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<Widget>(
+      future: _buildContent(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return snapshot.data!;
+        } else {
+          return CircularProgressIndicator();
+        }
       },
-    )
     );
   }
 }
-
-// class AppScreen extends StatefulWidget {
-//   const AppScreen({super.key});
-
-//   @override
-//   State<AppScreen> createState() => _AppScreenState();
-// }
-
-// class _AppScreenState extends State<AppScreen> {
-//   int _selectedIndex = 0;
-//   final List<Widget> _screens = [
-//     LoginPage(),
-//     const MemoryList(),
-//     const MemoryScreen(),
-//   ];
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: _screens[_selectedIndex],
-//       bottomNavigationBar: BottomNavigationBar(
-//         items: const <BottomNavigationBarItem>[
-//           BottomNavigationBarItem(
-//             icon: Icon(Icons.home),
-//             label: 'Главная',
-//           ),
-//           BottomNavigationBarItem(
-//             icon: Icon(Icons.cloud),
-//             label: 'Воспоминание',
-            
-//           ),
-//         ],
-//         currentIndex: _selectedIndex,
-//         onTap: _onTappedHandler
-//       )
-//     );
-//   }
-
-//     void _onTappedHandler(int index) {
-//       setState(() {
-//         _selectedIndex = index;
-//       });
-//     }
-// }
-
-
-
 
 class MainDrawer extends StatelessWidget {
   const MainDrawer({Key? key}) : super(key: key);
@@ -125,7 +93,7 @@ class MainDrawer extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: TextButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/memories');
+                  Navigator.pushNamed(context, '/');
                 },
                 child: const Text('Все воспоминания'),
               ),

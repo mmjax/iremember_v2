@@ -5,8 +5,8 @@ import 'package:iremember/data/memory/models.dart';
 
 
 class MemoryRepository {
-  Future<List<Memory>> getMemories() async {
-    final response = await http.get(Uri.http('127.0.0.1:8000', '/api/v1/memories/'));
+  Future<List<Memory>> getMemories(String token) async {
+    final response = await http.get(Uri.http('192.168.1.92:8000', '/api/v1/memories/'), headers: {"Authorization" : token});
     if (response.statusCode != 200) {
       throw Exception(jsonDecode(utf8.decode(response.bodyBytes)));
     }

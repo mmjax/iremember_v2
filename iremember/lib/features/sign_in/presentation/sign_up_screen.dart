@@ -3,6 +3,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:iremember/features/log_in/presentation/log_in_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:iremember/data/auth/repository.dart';
+
 
 
 void showErrorSnackBar(BuildContext context, String errorMessage) {
@@ -34,30 +36,14 @@ class SignUpPage extends StatelessWidget {
       String username = _usernameController.text;
       String repassword = _repasswordController.text;
 
-      if (email.isNotEmpty && password.isNotEmpty && username.isNotEmpty && password == repassword) {
-        // Отправка запроса на сервер для авторизации
-        final response = await http.post(
-          Uri.parse('http://192.168.1.92:8000/create_user'),
-          body: json.encode({'username': username, 'password': password, 'email': email}),
-          headers: {"Content-Type" : "application/json",
-            'Accept': 'application/json',},
-        );
+      try {
+        AuthRepository authRepository = AuthRepository(storage: storage);
+        await authRepository.registration(email, password, username, repassword);
+        Navigator.pushNamed(context, '/login');
+      } catch (e) {
+        showErrorSnackBar(context, e.toString());
+      }
 
-        if (response.statusCode == 200) {
-          Navigator.pushNamed(context, '/login');
-        }else {
-          if (response.statusCode == 400) {
-            // Bad Request - Incorrect input data
-            final errorDetail = json.decode(response.body)['detail'];
-            final errorMessage = (errorDetail is List) ? errorDetail[0]['msg'].toString() : errorDetail.toString();
-            // Show error messages to the user
-            showErrorSnackBar(context, errorMessage);
-          }
-        }
-      }
-      else{
-        showErrorSnackBar(context, 'Все поля являются обязательными к заполнению');
-      }
     }
     return Scaffold(
       body: SingleChildScrollView(

@@ -4,6 +4,7 @@ import 'package:iremember/features/memory/memory_screen.dart';
 import 'package:iremember/features/sign_in/presentation/sign_up_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:iremember/data/auth/repository.dart';
 
 void showErrorSnackBar(BuildContext context, String errorMessage) {
   ScaffoldMessenger.of(context).showSnackBar(
@@ -29,37 +30,14 @@ class LoginPage extends StatelessWidget {
     Future<void> _login(BuildContext context) async {
       String email = _emailController.text;
       String password = _passwordController.text;
-
-      if (email.isNotEmpty && password.isNotEmpty) {
-        // Отправка запроса на сервер для авторизации
-        final response = await http.post(
-          Uri.parse('http://192.168.1.92:8000/set_token'),
-          body: json.encode({'username': email, 'password': password}),
-          headers: {"Content-Type" : "application/json",
-            'Accept': 'application/json',},
-
-        );
-
-        if (response.statusCode == 200) {
-          // Если запрос успешен, сохраняем токен в безопасном хранилище
-          final token = json.decode(response.body)['access_token'] as String;
-          await storage.write(key: 'token', value: token);
-
-          // Переход на страницу / после успешной авторизации
-          Navigator.pushNamed(context, '/');
-        }else {
-          if (response.statusCode == 400) {
-            // Bad Request - Incorrect input data
-            final errorDetail = json.decode(response.body)['detail'];
-            final errorMessage = (errorDetail is List) ? errorDetail[0]['msg'].toString() : errorDetail.toString();
-            // Show error messages to the user
-            showErrorSnackBar(context, errorMessage);
-          }
-        }
-      }
-      else{
-        showErrorSnackBar(context, 'Все поля являются обязательными к заполнению');
-      }
+      try {
+       AuthRepository authRepository = AuthRepository(storage: storage);
+      await authRepository.login(email, password);
+      Navigator.pushNamed(context, '/');
+    } catch (e) {
+      print(e);
+      showErrorSnackBar(context, e.toString());
+    }
     }
 
 
