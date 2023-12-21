@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:iremember/core/presentation/app_screen.dart';
 
+import 'locator.dart';
+
 
 void main() {
+  setupLocator();
   runApp(const MyApp());
 }
 

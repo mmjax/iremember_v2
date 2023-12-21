@@ -4,6 +4,7 @@ import 'package:iremember/features/memory_list/bloc/memory_list_bloc.dart';
 import 'package:iremember/features/memory_list/bloc/memory_list_event.dart';
 import 'package:iremember/features/memory_list/bloc/memory_list_state.dart';
 import 'package:iremember/features/memory_list/widget/memory_list.dart';
+import 'package:iremember/locator.dart';
 
 import '../../core/presentation/app_screen.dart';
 
@@ -21,7 +22,7 @@ class _MemoryListScreen extends State<MemoryList>  {
     return Scaffold(
       drawer: const MainDrawer(),
       body: BlocBuilder<MemoryListBloc, ListMemoryState>(
-          bloc: BlocProvider.of<MemoryListBloc>(context)..add(LoadMemoriesEvent()),
+          bloc: locator<MemoryListBloc>()..add(LoadMemoriesEvent()),
           builder: (context, state) {
             if (state is MemoryLoadingState) {
               return const Center(

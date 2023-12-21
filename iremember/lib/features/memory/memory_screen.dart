@@ -7,6 +7,7 @@ import 'package:iremember/features/memory/bloc/memory_page_event.dart';
 import 'package:iremember/features/memory/bloc/memory_page_state.dart';
 import 'package:iremember/features/memory/bloc/memory_page_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:iremember/locator.dart';
 
 
 class DetailMemory extends StatefulWidget {
@@ -23,7 +24,7 @@ class _DetailMemoryState extends State<DetailMemory> {
     return Scaffold(
         drawer: const MainDrawer(),
         body: BlocBuilder<DetailMemoryBloc, DetailMemoryState>(
-          bloc: BlocProvider.of<DetailMemoryBloc>(context)..add(LoadMemoryEvent()),
+          bloc: locator<DetailMemoryBloc>()..add(LoadMemoryEvent()),
           builder: (context, state) {
 
             if (state is MemoryLoadingState) {

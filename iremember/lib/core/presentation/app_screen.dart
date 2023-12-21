@@ -7,15 +7,30 @@ import 'package:iremember/features/memory_list/memory_list_screen.dart';
 import 'package:iremember/features/profile/profile_screen.dart';
 import 'package:iremember/features/settings/setting_page.dart';
 import 'package:iremember/features/sign_in/presentation/sign_up_screen.dart';
+import 'package:iremember/locator.dart';
 import 'package:iremember/theme/color_schemes.g.dart';
 import 'package:iremember/features/memory/bloc/memory_page_bloc.dart';
 import 'package:iremember/data/memory/repository.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get_it/get_it.dart';
 
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<Widget>(
+      future: _buildContent(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return snapshot.data!;
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
+    );
+  }
 
   Future<Widget> _buildContent() async {
     const storage = FlutterSecureStorage();
@@ -25,10 +40,10 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => DetailMemoryBloc(MemoryRepository(), storage),
+          create: (context) => locator<DetailMemoryBloc>(),
         ),
         BlocProvider(
-          create: (context) => MemoryListBloc(MemoryRepository(), storage),
+          create: (context) => locator<MemoryListBloc>(),
         ),
       ],
       child: MaterialApp(
@@ -48,19 +63,7 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<Widget>(
-      future: _buildContent(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          return snapshot.data!;
-        } else {
-          return CircularProgressIndicator();
-        }
-      },
-    );
-  }
+
 }
 
 class MainDrawer extends StatelessWidget {
